@@ -1,0 +1,168 @@
+substitutions:
+# Change the disp_name to something you want  
+  dnum: "entrance"
+  #dnum: "neptune"
+  dname: brill_rgbw
+  sname: brill
+  location: living
+  full_name: ${location}_${dname}_${dnum}
+  short_name: ${location}_${sname}_${dnum}
+
+esphome:
+  name: ${full_name}
+  platform: ESP8266
+  board: esp01_1m
+  on_boot:
+    then:
+      - light.turn_on:
+          id: me
+          brightness: 80%
+          red: 0
+          green: 0
+          blue: 0
+          white: 1.0
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${full_name} HS"
+    password: "r1HmbMpHTwNe"
+
+captive_portal:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+
+light:
+  - platform: rgbw
+    name: ${short_name}
+    id: me
+    red: output_component1
+    green: output_component2
+    blue: output_component3
+    white: output_component4
+    default_transition_length: 0s
+    effects:
+      # Use default parameters:
+      - random:
+      # Customize parameters
+      - random:
+          name: "My Slow Random Effect"
+          transition_length: 30s
+          update_interval: 30s
+      - random:
+          name: "My Fast Random Effect"
+          transition_length: 4s
+          update_interval: 5s
+      - strobe:
+      - strobe:
+          name: Red Green
+          colors:
+            - state: True
+              brightness: 100%
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 4s
+            - state: False
+              duration: 1s
+            - state: True
+              brightness: 100%
+              red: 0%
+              green: 100%
+              blue: 0%
+              duration: 4s
+            - state: False
+              duration: 1s
+      - strobe:
+          name: Red Blue
+          colors:
+            - state: True
+              brightness: 100%
+              red: 100%
+              green: 0%
+              blue: 0%
+              duration: 750ms
+            - state: True
+              brightness: 100%
+              red: 0%
+              green: 0%
+              blue: 100%
+              duration: 750ms
+      - lambda:
+          name: RedGreenFade
+          update_interval: 4s
+          lambda: |-
+            static int state = 0;
+            auto call = id(me).turn_on();
+            // Transtion of 1000ms = 1s
+            call.set_transition_length(4000);
+            if (state == 0) {
+              call.set_rgbw(1.0, 0.0, 0.0, 0.0);
+            } else if (state == 1) {
+              call.set_rgbw(0.0, 1.0, 0.0, 0.0);
+            } else if (state == 2) {
+              call.set_rgbw(0.0, 0.0, 1.0, 0.0);
+            } else {
+              call.set_rgbw(0.0, 0.0, 0.0, 1.0);
+            }
+            call.perform();
+            state += 1;
+            if (state == 2)
+              state = 0;
+      - lambda:
+          name: Rainbow
+          update_interval: 3s
+          lambda: |-
+            static int state = 0;
+            auto call = id(me).turn_on();
+            // Transtion of 1000ms = 1s
+            call.set_transition_length(1000);
+            if (state == 0) {
+              call.set_rgbw(1.0, 0.0, 0.0, 0.0);
+            } else if (state == 1) {
+              call.set_rgbw(1.0, 0.50, 0.0, 0.0);
+            } else if (state == 2) {
+              call.set_rgbw(1.0, 0.75, 0.0, 0.0);
+            } else if (state == 3) {
+              call.set_rgbw(0.0, 0.55, 0.0, 0.0);
+            } else if (state == 4) {
+              call.set_rgbw(0.0, 0.0, 1.0, 0.0);
+            } else if (state == 5) {
+              call.set_rgbw(1.0, 0.0, 0.75, 0.0);
+            } else if (state == 6) {
+              call.set_rgbw(0.1, 0.1, 0.1, 0.0);
+            } else {
+              call.set_rgbw(0.0, 0.0, 0.0, 0.0);
+            }
+            call.perform();
+            state += 1;
+            if (state == 7)
+              state = 0;
+
+# Example output entry
+output:
+  - platform: esp8266_pwm
+    id: output_component1
+    pin: GPIO4
+  - platform: esp8266_pwm
+    id: output_component2
+    pin: GPIO12
+  - platform: esp8266_pwm
+    id: output_component3
+    pin: GPIO14
+  - platform: esp8266_pwm
+    id: output_component4
+    pin: GPIO5

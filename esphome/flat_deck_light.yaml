@@ -1,0 +1,35 @@
+esphome:
+  name: ss1
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+
+api:
+  password: !secret api_pass
+
+logger:
+
+ota:
+  password: !secret ota_pass
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO5
+    id: button
+    on_state:
+      - switch.toggle: relay
+
+
+switch:
+  - platform: gpio
+    name: light
+    pin: GPIO4
+    id: relay
+
+web_server:
+  port: 80

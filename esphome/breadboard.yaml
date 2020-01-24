@@ -1,0 +1,36 @@
+esphome:
+  name: breadboard
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+#  manual_ip:
+#    static_ip: 192.168.107.30
+#    gateway: 192.168.107.1
+#    subnet: 255.255.255.0
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+sensor:
+  - platform: max6675
+    name: "Temperature"
+    cs_pin: GPIO14 #GPIO2
+    update_interval: 5s
+
+spi:
+  miso_pin: GPIO1 # GPIO5 #TX
+  clk_pin: GPIO3 #GPIO4  #RX

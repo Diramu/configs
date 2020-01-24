@@ -1,0 +1,53 @@
+esphome:
+  name: garden1p
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+#  manual_ip:
+#    static_ip: 192.168.107.30
+#    gateway: 192.168.107.1
+#    subnet: 255.255.255.0
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Water Presure"
+    id: water_pressure
+    update_interval: 5s
+    unit_of_measurement: "psi"
+    filters:
+      - calibrate_linear:
+      # Map 0.0 (from sensor) to 0.0 (true value)
+        - 0.1 -> 0.0
+        - 0.9 -> 150.0
+  #- platform: max6675
+  #  name: "Living Room Temperature"
+  #  cs_pin: GPIO2
+  #  update_interval: 3s
+
+spi:
+  miso_pin: GPIO5 #TX
+  clk_pin: GPIO4  #RX
+
+switch:
+  - platform: gpio
+    name: garden1
+    pin: GPIO5
+    id: relay

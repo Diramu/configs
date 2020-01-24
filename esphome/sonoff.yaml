@@ -1,0 +1,63 @@
+substitutions:
+# Change the disp_name to something you want  
+  dnum: "red"
+  dname: sonoff_basic
+  #dname: sonoff_s22
+  #dname: sonoff_s20
+  sname: sb
+  #sname: s20
+  #location: lab
+  location: bathroom
+  full_name: ${location}_${dname}_${dnum}
+  short_name: ${location}_${sname}_${dnum}
+
+esphome:
+  name: ${full_name}
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+  #on_boot:
+  #  then:
+  #    - switch.turn_on: relay
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${full_name} AP"
+    password: "r1HmbMpHTwNe"
+
+captive_portal:
+
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+logger:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    id: button
+    on_press:
+      - switch.toggle: relay
+
+switch:
+  - platform: gpio
+    name: ${short_name}
+    pin: GPIO12
+    id: relay
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes

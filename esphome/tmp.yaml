@@ -1,0 +1,74 @@
+type: vertical-stack
+cards:
+  - type: entities
+    entities:
+      - sensor.pm12c_volts_a
+  - type: glance
+    entities:
+      - sensor.pm12c_ct1_pwr
+      - sensor.pm12c_ct1_amps
+      - sensor.pm12c_ct1_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct2_pwr
+      - sensor.pm12c_ct2_amps
+      - sensor.pm12c_ct2_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct3_pwr
+      - sensor.pm12c_ct3_amps
+      - sensor.pm12c_ct3_amps
+  - type: entities
+    entities:
+      - sensor.pm12c_volts_b
+  - type: glance
+    entities:
+      - sensor.pm12c_ct4_pwr
+      - sensor.pm12c_ct4_amps
+      - sensor.pm12c_ct4_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct5_pwr
+      - sensor.pm12c_ct5_amps
+      - sensor.pm12c_ct5_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct6_pwr
+      - sensor.pm12c_ct6_amps
+      - sensor.pm12c_ct6_amps
+  - type: entities
+    entities:
+      - sensor.pm12c_volts_c
+  - type: glance
+    entities:
+      - sensor.pm12c_ct7_pwr
+      - sensor.pm12c_ct7_amps
+      - sensor.pm12c_ct7_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct8_pwr
+      - sensor.pm12c_ct8_amps
+      - sensor.pm12c_ct8_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct9_pwr
+      - sensor.pm12c_ct9_amps
+      - sensor.pm12c_ct9_amps
+  - type: entities
+    entities:
+      - sensor.pm12c_volts_d
+  - type: glance
+    entities:
+      - sensor.pm12c_ct10_pwr
+      - sensor.pm12c_ct10_amps
+      - sensor.pm12c_ct10_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct11_pwr
+      - sensor.pm12c_ct11_amps
+      - sensor.pm12c_ct11_amps
+  - type: glance
+    entities:
+      - sensor.pm12c_ct12_pwr
+      - sensor.pm12c_ct12_amps
+      - sensor.pm12c_ct12_amps

@@ -1,0 +1,116 @@
+esphome:
+  name: skylight_tb
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+globals:
+  - id: start_current_plus
+    type: float
+    restore_value: no
+    initial_value: '0.0'
+
+output:
+  - platform: gpio
+    pin: D6
+    id: sky_dirA
+  - platform: gpio
+    pin: D7
+    id: sky_dirAbar
+  - platform: esp8266_pwm
+    pin: D8
+    frequency: 1000 Hz
+    id: sky_pwm
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Skylight DC current"
+    id: sky_current
+    update_interval: 30s
+  - platform: template
+    name: high_current
+    lambda: |-
+      return id(sky_current).state / id(start_current_plus);
+    update_interval: 60s
+    on_value_range:
+      above: 1.0
+      then:
+        - lambda: |-
+            id(skylight).stop();
+cover:
+  - platform: template
+    name: Skylight
+    id: skylight
+    open_action:
+      - output.turn_off: sky_dirAbar
+      - output.turn_on: sky_dirA
+      - output.set_level:
+          id: sky_pwm
+          level: 100%
+      - delay: 0.01s
+      - lambda: |-
+          id(start_current_plus) = id(sky_current).state * 1.1;
+    close_action:
+      - output.turn_off: sky_dirA
+      - output.turn_on: sky_dirAbar
+      - output.set_level:
+          id: sky_pwm
+          level: 100%
+      - delay: 0.01s
+      - lambda: |-
+          id(start_current_plus) = id(sky_current).state * 1.1;
+    stop_action:
+      - output.turn_off: sky_dirAbar
+      - output.turn_off: sky_dirA
+      - output.set_level:
+          id: sky_pwm
+          level: 0%
+    optimistic: true
+    assumed_state: true
+web_server:
+  port: 80
+
+
+#cover:
+#  - platform: template
+#    name: Skylight
+#    id: skylight
+#    open_action:
+#      - output.turn_on: sky_dirA
+#      - output.turn_off: sky_dirAbar
+#      - output.set_level:
+#        id: sky_pwm
+#        level: 100%
+#      - delay 0.01s
+#      - lambda: |-
+#          id(start_current_plus) = id(sky_current).state * 1.1;
+#    close_action:
+#      - output.turn_off: sky_dirA
+#      - output.turn_on: sky_dirAbar
+#      - output.set_level:
+#        id: sky_pwm
+#        level: 100%
+#      - delay 0.01s
+#      - lambda: |-
+#          id(start_current_plus) = id(sky_current).state * 0.1;
+#    stop_action:
+#      - output.turn_off: sky_dirA
+#      - output.turn_off: sky_dirAbar
+#      - output.set_level:
+#        id: sky_pwm
+#        level: 0%
+#

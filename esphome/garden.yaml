@@ -1,0 +1,45 @@
+esphome:
+  name: garden
+  platform: ESP8266
+  board: d1_mini
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+  
+web_server:
+  port: 80
+sensor:
+  - platform: adc
+    pin: A0
+    name: "Water Presure"
+    unit_of_measurement: "PSI"
+    update_interval: 30s
+    filters:
+      - calibrate_linear:
+        - 0.1 -> 0.0
+        - 0.9 -> 150.0
+  - platform: pulse_counter
+    pin: 12
+    name: "Water Flow"
+    unit_of_measurement: 'lpm'
+    filters:
+      - multiply: 0.964
+  - platform: max6675
+    name: "Living Room Temperature"
+    cs_pin: GPIO14
+    update_interval: 0.1s
+
+spi:
+  miso_pin: GPIO1 #TX
+  clk_pin: GPIO3  #RX

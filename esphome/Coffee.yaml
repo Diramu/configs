@@ -1,0 +1,38 @@
+esphome:
+  name: coffee
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  manual_ip:
+    static_ip: 192.168.107.6
+    gateway: 192.168.107.1
+    subnet: 255.255.255.0
+
+
+api:
+  password: !secret api_pass
+
+logger:
+
+ota:
+  password: !secret ota_pass
+
+binary_sensor:
+  - platform: gpio
+    pin: GPIO5
+    id: coffee_sw
+    on_state:
+      - switch.toggle: relay
+
+
+switch:
+  - platform: gpio
+    name: "Coffee"
+    pin: GPIO4
+    id: relay
+
+web_server:
+  port: 80

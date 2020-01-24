@@ -1,0 +1,54 @@
+substitutions:
+# Change the disp_name to something you want  
+  dnum: "1"
+  dname: arlec_flood
+  sname: af
+  location: spare
+  full_name: ${location}_${dname}_${dnum}
+  short_name: ${location}_${sname}_${dnum}
+
+esphome:
+  name: ${full_name}
+  platform: ESP8266
+  board: esp01_1m
+  on_boot:
+    then:
+      - light.turn_on:
+          id: me
+          brightness: 80%
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${full_name} Hotspot"
+    password: "r1HmbMpHTwNe"
+
+captive_portal:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+
+light:
+  - platform: monochromatic
+    name: ${short_name}
+    id: me
+    output: output_component1
+    default_transition_length: 0s
+
+# Example output entry
+output:
+  - platform: esp8266_pwm
+    id: output_component1
+    pin: GPIO14

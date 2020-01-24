@@ -1,0 +1,59 @@
+esphome:
+  name: water_fountain
+  platform: ESP8266
+  board: esp01_1m
+  esp8266_restore_from_flash: true
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: True
+    name: "Water Fountain"
+    on_press:
+      - switch.toggle: relay
+  - platform: gpio
+    pin:
+      number: GPIO14
+      mode: INPUT_PULLUP
+      #inverted: True
+    name: "Water Level Low"
+    id: level_low
+    on_state:
+      if:
+        condition:
+          binary_sensor.is_on:
+            id: level_low
+        then:
+          - switch.turn_off: relay
+
+switch:
+  - platform: gpio
+    name: "Water Fountain"
+    pin: GPIO12
+    id: relay
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
+
+web_server:
+  port: 80
+
