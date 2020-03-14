@@ -1,0 +1,55 @@
+substitutions:
+# Change the disp_name to something you want  
+  dnum: "1"
+  dname: brill_drimmer
+  sname: bdim
+  location: spare
+  full_name: ${location}_${dname}_${dnum}
+  short_name: ${location}_${sname}_${dnum}
+
+esphome:
+  name: ${full_name}
+  platform: ESP8266
+  board: esp01_1m
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${full_name} HS"
+    password: "r1HmbMpHTwNe"
+
+captive_portal:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+# Make sure logging is not using the serial port
+logger:
+  baud_rate: 0
+
+
+# My dimmer used the hardware serial port on the alternate pins
+uart:
+  rx_pin: GPIO03
+  tx_pin: GPIO01
+  baud_rate: 9600
+
+# Register the Tuya MCU connection
+tuya:
+  
+light:
+  - platform: "tuya"
+    name: ${short_name}
+    dimmer_datapoint: 2
+    switch_datapoint: 1
+    min_value: 1
+    max_value: 255

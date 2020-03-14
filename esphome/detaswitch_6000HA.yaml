@@ -1,0 +1,60 @@
+substitutions:
+# Change the disp_name to something you want  
+  dnum: "1"
+  dname: deta_switch
+  sname: dsw
+  location: spare
+  full_name: ${location}_${dname}_${dnum}
+  short_name: ${location}_${sname}_${dnum}
+
+esphome:
+  name: ${full_name}
+  platform: ESP8266
+  board: esp01_1m
+  on_boot:
+    then:
+      - switch.turn_on: relay
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_pass
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${full_name} Hotspot"
+    password: "r1HmbMpHTwNe"
+
+captive_portal:
+
+# Enable Home Assistant API
+api:
+  password: !secret api_pass
+
+ota:
+  password: !secret api_pass
+
+web_server:
+  port: 80
+
+# Enable logging
+logger:
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO1
+      #mode: INPUT_PULLUP
+      #inverted: True
+    id: button
+    on_press:
+      - switch.toggle: relay
+
+switch:
+  - platform: gpio
+    name: ${short_name}
+    pin: GPIO14
+    id: relay
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: yes
